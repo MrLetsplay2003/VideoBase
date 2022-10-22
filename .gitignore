@@ -4,3 +4,7 @@ dependency-reduced-pom.xml
 bin/
 .classpath
 vids/
+cfg/
+data/
+include/
+logs/

@@ -73,4 +73,12 @@ public class Library {
 		return collections;
 	}
 
+	public List<VideoCollection> filter(String query) {
+		if(query == null) return new ArrayList<>(collections);
+		return collections
+			.stream()
+			.filter(c -> c.getName().toLowerCase().contains(query.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
 }

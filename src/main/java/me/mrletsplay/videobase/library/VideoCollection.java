@@ -22,6 +22,10 @@ public class VideoCollection {
 		return videos;
 	}
 
+	public String getName() {
+		return metadata.optString("name").orElse("Unnamed Collection");
+	}
+
 	@Override
 	public String toString() {
 		return videos.toString();

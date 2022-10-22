@@ -22,6 +22,10 @@ public class Video {
 		return metadata;
 	}
 
+	public String getName() {
+		return metadata.optString("name").orElse("Unnamed Video");
+	}
+
 	@Override
 	public String toString() {
 		return path.toString();
