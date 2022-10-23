@@ -15,6 +15,7 @@ import me.mrletsplay.webinterfaceapi.page.element.Button;
 import me.mrletsplay.webinterfaceapi.page.element.Group;
 import me.mrletsplay.webinterfaceapi.page.element.HorizontalSpacer;
 import me.mrletsplay.webinterfaceapi.page.element.InputField;
+import me.mrletsplay.webinterfaceapi.page.element.Text;
 import me.mrletsplay.webinterfaceapi.page.element.builder.Align;
 import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 
@@ -46,7 +47,7 @@ public class LibraryPage extends Page {
 				.create());
 
 			List<VideoCollection> filtered = VideoBase.getLibrary().filter(q);
-			int numPages = (filtered.size() + PAGE_SIZE - 1) / PAGE_SIZE;
+			int numPages = Math.max(1, (filtered.size() + PAGE_SIZE - 1) / PAGE_SIZE);
 
 			int p;
 			try {
@@ -69,6 +70,7 @@ public class LibraryPage extends Page {
 					.icon("mdi:chevron-left")
 					.disabled(p == 0)
 					.create());
+
 			for(int i = 0; i < 5; i++) {
 				int pg = p + i - 2;
 				if(pg < 0 || pg >= numPages) {
@@ -79,6 +81,7 @@ public class LibraryPage extends Page {
 					.text("" + (pg + 1))
 					.create());
 			}
+
 			buttonGroup.addElement(Button.builder()
 				.icon("mdi:chevron-right")
 				.disabled(p == numPages - 1)
@@ -87,9 +90,16 @@ public class LibraryPage extends Page {
 
 			els.add(buttonGroup);
 
-			filtered.stream().skip(p * PAGE_SIZE).limit(PAGE_SIZE).forEach(col -> {
-				els.add(new VideoCollectionElement(col));
-			});
+			if(!filtered.isEmpty()) {
+				filtered.stream().skip(p * PAGE_SIZE).limit(PAGE_SIZE).forEach(col -> {
+					els.add(new VideoCollectionElement(col));
+				});
+			}else {
+				els.add(Text.builder()
+					.fullWidth()
+					.text("Nothing to see here")
+					.create());
+			}
 
 			els.add(buttonGroup);
 		});

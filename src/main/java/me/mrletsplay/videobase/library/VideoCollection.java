@@ -6,6 +6,9 @@ import me.mrletsplay.mrcore.json.JSONObject;
 
 public class VideoCollection {
 
+	public static final String
+		META_NAME=  "name";
+
 	private JSONObject metadata;
 	private List<Video> videos;
 
@@ -23,7 +26,7 @@ public class VideoCollection {
 	}
 
 	public String getName() {
-		return metadata.optString("name").orElse("Unnamed Collection");
+		return metadata.optString(META_NAME).orElse("Unnamed Collection");
 	}
 
 	@Override
