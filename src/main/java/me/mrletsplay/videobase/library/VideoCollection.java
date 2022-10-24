@@ -7,7 +7,7 @@ import me.mrletsplay.mrcore.json.JSONObject;
 public class VideoCollection {
 
 	public static final String
-		META_NAME=  "name";
+		META_NAME = "name";
 
 	private JSONObject metadata;
 	private List<Video> videos;

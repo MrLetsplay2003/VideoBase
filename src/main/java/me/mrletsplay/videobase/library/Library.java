@@ -1,8 +1,8 @@
 package me.mrletsplay.videobase.library;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,13 +26,9 @@ public class Library {
 	}
 
 	private void load() throws LibraryLoadException {
-		try {
-			List<Path> children = Files.walk(baseFolder, 1, FileVisitOption.FOLLOW_LINKS)
-				.filter(Files::isDirectory)
-				.collect(Collectors.toList());
-			for(Path p : children) loadCollection(p);
-		} catch (IOException e) {
-			throw new LibraryLoadException(e);
+		for(File f : baseFolder.toFile().listFiles()) {
+			if(!f.isDirectory()) continue;
+			loadCollection(f.toPath());
 		}
 	}
 
