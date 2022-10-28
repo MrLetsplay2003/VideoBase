@@ -12,4 +12,6 @@ public interface VideoProvider {
 
 	public List<VideoSource> getVideoSources(String videoID);
 
+	public VideoSource getVideoSource(String id);
+
 }
