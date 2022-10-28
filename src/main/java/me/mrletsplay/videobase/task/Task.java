@@ -53,7 +53,7 @@ public abstract class Task {
 
 		try {
 			runTask();
-			state = TaskState.FINISHED;
+			if(state == TaskState.RUNNING) state = TaskState.FINISHED;
 		}catch(Exception e) {
 			error(e);
 		}
@@ -66,10 +66,14 @@ public abstract class Task {
 
 	public void cancel() {
 		synchronized(lock) {
-			if(state != TaskState.RUNNING) return;
+			if(state != TaskState.QUEUED && state != TaskState.RUNNING) return;
+
+			if(state == TaskState.RUNNING) {
+				runningThread.interrupt();
+				runningThread = null;
+			}
+
 			state = TaskState.CANCELLED;
-			runningThread.interrupt();
-			runningThread = null;
 		}
 
 		onCancel();

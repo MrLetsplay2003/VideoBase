@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TaskQueue {
 
-	private Object lock;
+	private Object lock = new Object();
 
 	private ExecutorService executor;
 	private List<Task> tasks;
@@ -37,10 +37,20 @@ public class TaskQueue {
 		}
 	}
 
-	public void stop(boolean awaitTermination) {
+	public void stop(boolean cancelRunningTasks) {
 		executor.shutdown();
+		if(cancelRunningTasks) {
+			synchronized (lock) {
+				tasks.stream()
+					.filter(t -> t.getState() == TaskState.RUNNING)
+					.forEach(t -> t.cancel());
+			}
+		}
+	}
+
+	public void awaitTermination(long timeout, TimeUnit unit) {
 		try {
-			if(!executor.awaitTermination(10, TimeUnit.SECONDS)) executor.shutdownNow();
+			if(!executor.awaitTermination(timeout, unit)) executor.shutdownNow();
 		} catch (InterruptedException e) {}
 	}
 
@@ -51,7 +61,7 @@ public class TaskQueue {
 			t = tasks.get(0);
 		}
 
-		t.run();
+		 if(t.getState() != TaskState.CANCELLED) t.run();
 
 		synchronized (lock) {
 			tasks.remove(t);
