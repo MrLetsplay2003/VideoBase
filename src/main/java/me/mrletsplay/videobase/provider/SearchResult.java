@@ -24,6 +24,10 @@ public class SearchResult {
 		this(provider, collectionID, metadata, null);
 	}
 
+	public VideoProvider getProvider() {
+		return provider;
+	}
+
 	public String getCollectionID() {
 		return collectionID;
 	}

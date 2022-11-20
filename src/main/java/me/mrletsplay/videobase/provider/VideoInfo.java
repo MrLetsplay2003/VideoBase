@@ -36,7 +36,7 @@ public abstract class VideoInfo {
 		return metadata.optString(META_THUMBNAIL).orElse(null);
 	}
 
-	public List<VideoSource> loadSources() {
+	public List<? extends VideoSource> loadSources() {
 		return provider.getVideoSources(id);
 	}
 

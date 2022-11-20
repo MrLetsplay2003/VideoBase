@@ -13,9 +13,9 @@ public abstract class VideoCollectionInfo {
 	private VideoProvider provider;
 	private String id;
 	private JSONObject metadata;
-	private List<VideoInfo> cachedVideos;
+	private List<? extends VideoInfo> cachedVideos;
 
-	public VideoCollectionInfo(VideoProvider provider, JSONObject metadata, List<VideoInfo> videos) {
+	public VideoCollectionInfo(VideoProvider provider, JSONObject metadata, List<? extends VideoInfo> videos) {
 		this.provider = provider;
 		this.metadata = metadata;
 		this.cachedVideos = videos;
@@ -29,7 +29,7 @@ public abstract class VideoCollectionInfo {
 		return id;
 	}
 
-	public List<VideoInfo> loadVideos() {
+	public List<? extends VideoInfo> loadVideos() {
 		if(cachedVideos != null) return cachedVideos;
 		return cachedVideos = provider.getCollectionVideos(id);
 	}

@@ -8,9 +8,9 @@ public interface VideoProvider {
 
 	public VideoCollectionInfo getCollectionInfo(String collectionID);
 
-	public List<VideoInfo> getCollectionVideos(String collectionID);
+	public List<? extends VideoInfo> getCollectionVideos(String collectionID);
 
-	public List<VideoSource> getVideoSources(String videoID);
+	public List<? extends VideoSource> getVideoSources(String videoID);
 
 	public VideoSource getVideoSource(String id);
 
