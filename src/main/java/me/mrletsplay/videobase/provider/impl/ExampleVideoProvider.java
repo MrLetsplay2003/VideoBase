@@ -61,8 +61,11 @@ public class ExampleVideoProvider implements VideoProvider {
 	}
 
 	@Override
-	public List<VideoSource> getVideoSources(String videoID) {
-		return Collections.emptyList();
+	public List<? extends VideoSource> getVideoSources(String videoID) {
+		ExampleVideoSource source = new ExampleVideoSource();
+		String id = sourceCache.add(source);
+		source.setID(id);
+		return Collections.singletonList(source);
 	}
 
 	@Override
