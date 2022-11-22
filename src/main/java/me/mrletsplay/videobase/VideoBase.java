@@ -15,6 +15,7 @@ import me.mrletsplay.videobase.webinterface.page.HomePage;
 import me.mrletsplay.videobase.webinterface.page.LibraryPage;
 import me.mrletsplay.videobase.webinterface.page.SearchPage;
 import me.mrletsplay.webinterfaceapi.Webinterface;
+import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.page.PageCategory;
 
 public class VideoBase {
@@ -58,6 +59,7 @@ public class VideoBase {
 		init(Path.of("vids"));
 		addProvider(new ExampleVideoProvider());
 
+		DefaultSettings.HOME_PAGE_PATH.defaultValue(HomePage.URL);
 		Webinterface.start();
 
 		PageCategory cat = Webinterface.createCategory("VideoBase");
