@@ -14,8 +14,8 @@ public class ExampleVideoCollectionInfo extends VideoCollectionInfo {
 		return meta;
 	}
 
-	public ExampleVideoCollectionInfo(VideoProvider provider, String name, List<ExampleVideoInfo> infos) {
-		super(provider, createMeta(name), infos);
+	public ExampleVideoCollectionInfo(VideoProvider provider, String id, String name, List<ExampleVideoInfo> infos) {
+		super(provider, id, createMeta(name), infos);
 	}
 
 }

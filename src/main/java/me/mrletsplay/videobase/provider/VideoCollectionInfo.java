@@ -15,14 +15,15 @@ public abstract class VideoCollectionInfo {
 	private JSONObject metadata;
 	private List<? extends VideoInfo> cachedVideos;
 
-	public VideoCollectionInfo(VideoProvider provider, JSONObject metadata, List<? extends VideoInfo> videos) {
+	public VideoCollectionInfo(VideoProvider provider, String id, JSONObject metadata, List<? extends VideoInfo> videos) {
 		this.provider = provider;
+		this.id = id;
 		this.metadata = metadata;
 		this.cachedVideos = videos;
 	}
 
-	public VideoCollectionInfo(VideoProvider provider, JSONObject metadata) {
-		this(provider, metadata, null);
+	public VideoCollectionInfo(VideoProvider provider, String id, JSONObject metadata) {
+		this(provider, id, metadata, null);
 	}
 
 	public String getID() {

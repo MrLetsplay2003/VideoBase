@@ -24,6 +24,7 @@ public class SearchResultElement extends Group {
 
 		addElement(Button.builder()
 			.text("View")
+//			.onClick(RedirectAction.to(ActionValue.string(VideoCollectionPage.URL).plus(ActionValue.string("?id=")).plus(ActionValue.string(result.getCollectionID()).urlEncoded())))
 			.create());
 	}
 

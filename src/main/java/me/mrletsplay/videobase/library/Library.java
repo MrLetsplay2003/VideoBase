@@ -55,7 +55,7 @@ public class Library {
 				videosList.add(new Video(videoPath, meta));
 			}
 
-			collections.add(new VideoCollection(indexMeta, videosList));
+			collections.add(new VideoCollection(collectionFolder.getFileName().toString(), indexMeta, videosList));
 		} catch (IOException | JSONParseException | ClassCastException e) {
 			throw new LibraryLoadException(e);
 		}
@@ -67,6 +67,12 @@ public class Library {
 
 	public List<VideoCollection> getCollections() {
 		return collections;
+	}
+
+	public VideoCollection getCollection(String id) {
+		return collections.stream()
+			.filter(c -> c.getID().equals(id))
+			.findFirst().orElse(null);
 	}
 
 	public List<VideoCollection> filter(String query) {

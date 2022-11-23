@@ -9,12 +9,18 @@ public class VideoCollection {
 	public static final String
 		META_NAME = "name";
 
+	private String id;
 	private JSONObject metadata;
 	private List<Video> videos;
 
-	public VideoCollection(JSONObject metadata, List<Video> videos) {
+	public VideoCollection(String id, JSONObject metadata, List<Video> videos) {
+		this.id = id;
 		this.metadata = metadata;
 		this.videos = videos;
+	}
+
+	public String getID() {
+		return id;
 	}
 
 	public JSONObject getMetadata() {

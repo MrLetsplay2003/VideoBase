@@ -22,12 +22,12 @@ public class ExampleVideoProvider implements VideoProvider {
 	private static final ExampleVideoProvider INSTANCE = new ExampleVideoProvider();
 	private static final List<VideoCollectionInfo> COLLECTIONS = new ArrayList<>();
 	static {
-		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "Collection One",
+		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "one", "Collection One",
 			Arrays.asList(
 				new ExampleVideoInfo(INSTANCE, "video-1", "Video One"),
 				new ExampleVideoInfo(INSTANCE, "video-2", "Video Two")
 			)));
-		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "Collection Two",
+		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "two", "Collection Two",
 				Arrays.asList(
 					new ExampleVideoInfo(INSTANCE, "video-3", "Video Three"),
 					new ExampleVideoInfo(INSTANCE, "video-4", "Video Four")

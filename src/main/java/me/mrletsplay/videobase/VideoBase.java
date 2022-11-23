@@ -14,6 +14,7 @@ import me.mrletsplay.videobase.proxy.URLProxy;
 import me.mrletsplay.videobase.webinterface.page.HomePage;
 import me.mrletsplay.videobase.webinterface.page.LibraryPage;
 import me.mrletsplay.videobase.webinterface.page.SearchPage;
+import me.mrletsplay.videobase.webinterface.page.VideoCollectionPage;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.page.PageCategory;
@@ -66,6 +67,7 @@ public class VideoBase {
 		cat.addPage(new HomePage());
 		cat.addPage(new LibraryPage());
 		cat.addPage(new SearchPage());
+		cat.addPage(new VideoCollectionPage());
 	}
 
 }

@@ -1,6 +1,9 @@
 package me.mrletsplay.videobase.webinterface.element;
 
 import me.mrletsplay.videobase.library.VideoCollection;
+import me.mrletsplay.videobase.webinterface.page.VideoCollectionPage;
+import me.mrletsplay.webinterfaceapi.page.action.RedirectAction;
+import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.Button;
 import me.mrletsplay.webinterfaceapi.page.element.Group;
 import me.mrletsplay.webinterfaceapi.page.element.Image;
@@ -24,6 +27,7 @@ public class VideoCollectionElement extends Group {
 
 		addElement(Button.builder()
 			.text("View")
+			.onClick(RedirectAction.to(ActionValue.string(VideoCollectionPage.URL).plus(ActionValue.string("?id=")).plus(ActionValue.string(collection.getID()).urlEncoded())))
 			.create());
 	}
 
