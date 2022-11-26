@@ -3,12 +3,17 @@ package me.mrletsplay.videobase.library;
 import java.util.List;
 
 import me.mrletsplay.mrcore.json.JSONObject;
+import me.mrletsplay.videobase.VideoBase;
+import me.mrletsplay.videobase.provider.VideoCollectionInfo;
+import me.mrletsplay.videobase.provider.VideoProvider;
 
 public class VideoCollection {
 
 	public static final String
 		META_NAME = "name",
-		META_THUMBNAIL = "thumbnail";
+		META_THUMBNAIL = "thumbnail",
+		META_REMOTE_PROVIDER = "remote.provider",
+		META_REMOTE_ID = "remote.id";
 
 	private String id;
 	private JSONObject metadata;
@@ -38,6 +43,17 @@ public class VideoCollection {
 
 	public String getThumbnail() {
 		return metadata.optString(META_THUMBNAIL).orElse(null);
+	}
+
+	public VideoCollectionInfo retrieveInfo() {
+		VideoProvider provider = metadata.optString(META_REMOTE_PROVIDER)
+			.map(VideoBase::getProvider)
+			.orElse(null);
+		if(provider == null) return null;
+
+		return metadata.optString(META_REMOTE_ID)
+			.map(provider::getCollectionInfo)
+			.orElse(null);
 	}
 
 	@Override

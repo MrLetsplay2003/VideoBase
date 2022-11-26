@@ -50,6 +50,12 @@ public class VideoBase {
 		return providers;
 	}
 
+	public static VideoProvider getProvider(String id) {
+		return providers.stream()
+			.filter(p -> p.getID().equals(id))
+			.findFirst().orElse(null);
+	}
+
 	public static List<SearchResult> search(String query) {
 		return providers.stream()
 			.flatMap(p -> p.findVideoCollections(query).stream())

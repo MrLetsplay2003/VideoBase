@@ -35,6 +35,11 @@ public class ExampleVideoProvider implements VideoProvider {
 	}
 
 	@Override
+	public String getID() {
+		return "example";
+	}
+
+	@Override
 	public List<SearchResult> findVideoCollections(String query) {
 		return COLLECTIONS.stream()
 			.filter(c -> c.getName().toLowerCase().contains(query.toLowerCase()))
@@ -63,8 +68,7 @@ public class ExampleVideoProvider implements VideoProvider {
 	@Override
 	public List<? extends VideoSource> getVideoSources(String videoID) {
 		ExampleVideoSource source = new ExampleVideoSource();
-		String id = sourceCache.add(source);
-		source.setID(id);
+		sourceCache.add(source.getID(), source);
 		return Collections.singletonList(source);
 	}
 

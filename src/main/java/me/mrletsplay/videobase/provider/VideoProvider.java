@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface VideoProvider {
 
+	public String getID();
+
 	public List<SearchResult> findVideoCollections(String query);
 
 	public VideoCollectionInfo getCollectionInfo(String collectionID);

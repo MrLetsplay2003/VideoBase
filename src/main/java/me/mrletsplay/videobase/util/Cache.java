@@ -9,21 +9,24 @@ import java.util.UUID;
 public class Cache<T> {
 
 	private Map<String, CacheEntry> entries;
-	private long amount;
+	private long timeout;
 	private TemporalUnit unit;
 
-	public Cache(long amount, TemporalUnit unit) {
+	public Cache(long timeout, TemporalUnit unit) {
 		this.entries = new HashMap<>();
-		this.amount = amount;
+		this.timeout = timeout;
 		this.unit = unit;
 	}
 
-	public synchronized String add(T element) {
-		String id = UUID.randomUUID().toString().replace("-", "");
-		Instant expiresAt = Instant.now().plus(amount, unit);
+	public synchronized String add(String id, T element) {
+		Instant expiresAt = Instant.now().plus(timeout, unit);
 		CacheEntry entry = new CacheEntry(element, expiresAt);
 		entries.put(id, entry);
 		return id;
+	}
+
+	public synchronized String add(T element) {
+		return add(UUID.randomUUID().toString().replace("-", ""), element);
 	}
 
 	public synchronized T get(String id) {
