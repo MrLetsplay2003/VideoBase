@@ -18,17 +18,19 @@ public class TaskQueue {
 		this.executor = Executors.newFixedThreadPool(threads);
 		this.tasks = new ArrayList<>();
 		this.finishedTasks = new ArrayList<>();
-		for(int i = 0; i < threads; i++) executor.submit(() -> {
-			while(!executor.isShutdown()) {
-				if(!runNextTask()) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						break;
+		for(int i = 0; i < threads; i++) {
+			executor.submit(() -> {
+				while(!executor.isShutdown()) {
+					if(!runNextTask()) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							break;
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	public void addTask(Task task) {

@@ -1,6 +1,13 @@
 package me.mrletsplay.videobase.library;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.videobase.VideoBase;
@@ -16,21 +23,31 @@ public class VideoCollection {
 		META_REMOTE_ID = "remote.id";
 
 	private String id;
+	private Path path;
 	private JSONObject metadata;
 	private List<Video> videos;
 
-	public VideoCollection(String id, JSONObject metadata, List<Video> videos) {
+	public VideoCollection(String id, Path path, JSONObject metadata) {
 		this.id = id;
+		this.path = path;
 		this.metadata = metadata;
-		this.videos = videos;
+		this.videos = new ArrayList<>();
 	}
 
 	public String getID() {
 		return id;
 	}
 
+	public Path getPath() {
+		return path;
+	}
+
 	public JSONObject getMetadata() {
 		return metadata;
+	}
+
+	public void addVideo(Video video) {
+		this.videos.add(video);
 	}
 
 	public List<Video> getVideos() {
@@ -43,6 +60,25 @@ public class VideoCollection {
 
 	public String getThumbnail() {
 		return metadata.optString(META_THUMBNAIL).orElse(null);
+	}
+
+	public BufferedImage getThumbnailImage() {
+		if(getThumbnail() == null) return null;
+
+		Path thumbnailPath = Path.of(path.toString(), getThumbnail());
+		if(!Files.exists(thumbnailPath)) return null;
+
+		try {
+			return ImageIO.read(thumbnailPath.toFile());
+		}catch(IOException e) {
+			return null;
+		}
+	}
+
+	public Video getVideo(String id) {
+		return videos.stream()
+			.filter(v -> v.getID().equals(id))
+			.findFirst().orElse(null);
 	}
 
 	public VideoCollectionInfo retrieveInfo() {

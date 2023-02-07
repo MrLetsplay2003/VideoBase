@@ -42,20 +42,22 @@ public class Library {
 			JSONArray videos = index.optJSONArray("videos").orElse(null);
 			if(videos == null) return;
 
-			List<Video> videosList = new ArrayList<>();
+			VideoCollection collection = new VideoCollection(collectionFolder.getFileName().toString(), collectionFolder, indexMeta);
 			for(Object video : videos) {
 				if(!(video instanceof JSONObject)) continue;
 				JSONObject vid = (JSONObject) video;
 
-				JSONObject meta = vid.optJSONObject("metadata").orElse(new JSONObject());
+				String id = vid.optString("id").orElse(null);
+				if(id == null) continue;
 				String path = vid.optString("path").orElse(null);
 				if(path == null) continue;
+				JSONObject meta = vid.optJSONObject("metadata").orElse(new JSONObject());
 
 				Path videoPath = Path.of(collectionFolder.toString(), path);
-				videosList.add(new Video(videoPath, meta));
+				collection.addVideo(new Video(collection, id, videoPath, meta));
 			}
 
-			collections.add(new VideoCollection(collectionFolder.getFileName().toString(), indexMeta, videosList));
+			collections.add(collection);
 		} catch (IOException | JSONParseException | ClassCastException e) {
 			throw new LibraryLoadException(e);
 		}

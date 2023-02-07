@@ -1,6 +1,8 @@
 package me.mrletsplay.videobase;
 
+import java.awt.image.BufferedImage;
 import java.nio.file.Path;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,10 +13,17 @@ import me.mrletsplay.videobase.provider.SearchResult;
 import me.mrletsplay.videobase.provider.VideoProvider;
 import me.mrletsplay.videobase.provider.impl.ExampleVideoProvider;
 import me.mrletsplay.videobase.proxy.URLProxy;
+import me.mrletsplay.videobase.util.Cache;
+import me.mrletsplay.videobase.webinterface.handler.VideoBaseHandler;
+import me.mrletsplay.videobase.webinterface.internal.CollectionThumbnailDocument;
+import me.mrletsplay.videobase.webinterface.internal.VideoDocument;
+import me.mrletsplay.videobase.webinterface.internal.VideoThumbnailDocument;
 import me.mrletsplay.videobase.webinterface.page.HomePage;
 import me.mrletsplay.videobase.webinterface.page.LibraryPage;
 import me.mrletsplay.videobase.webinterface.page.SearchPage;
+import me.mrletsplay.videobase.webinterface.page.SettingsPage;
 import me.mrletsplay.videobase.webinterface.page.VideoCollectionPage;
+import me.mrletsplay.videobase.webinterface.page.WatchPage;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.page.PageCategory;
@@ -24,10 +33,12 @@ public class VideoBase {
 	private static Library library;
 	private static URLProxy proxy;
 	private static List<VideoProvider> providers;
+	private static Cache<BufferedImage> thumbnailCache;
 
 	public static void init(Path libraryPath) throws LibraryLoadException {
 		library = new Library(libraryPath);
 		providers = new ArrayList<>();
+		thumbnailCache = new Cache<>(1, ChronoUnit.HOURS);
 	}
 
 	public static Library getLibrary() {
@@ -62,6 +73,10 @@ public class VideoBase {
 			.collect(Collectors.toList());
 	}
 
+	public static Cache<BufferedImage> getThumbnailCache() {
+		return thumbnailCache;
+	}
+
 	public static void main(String[] args) throws LibraryLoadException {
 		init(Path.of("vids"));
 		addProvider(new ExampleVideoProvider());
@@ -69,11 +84,20 @@ public class VideoBase {
 		DefaultSettings.HOME_PAGE_PATH.defaultValue(HomePage.URL);
 		Webinterface.start();
 
+		Webinterface.getConfig().registerSettings(VideoBaseSettings.INSTANCE);
+		Webinterface.registerActionHandler(new VideoBaseHandler());
+
 		PageCategory cat = Webinterface.createCategory("VideoBase");
 		cat.addPage(new HomePage());
 		cat.addPage(new LibraryPage());
 		cat.addPage(new SearchPage());
 		cat.addPage(new VideoCollectionPage());
+		cat.addPage(new WatchPage());
+		cat.addPage(new SettingsPage());
+
+		Webinterface.getDocumentProvider().registerDocument(VideoDocument.URL, new VideoDocument());
+		Webinterface.getDocumentProvider().registerDocument(VideoThumbnailDocument.URL, new VideoThumbnailDocument());
+		Webinterface.getDocumentProvider().registerDocument(CollectionThumbnailDocument.URL, new CollectionThumbnailDocument());
 	}
 
 }

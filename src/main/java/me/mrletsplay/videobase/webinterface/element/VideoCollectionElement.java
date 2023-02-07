@@ -1,6 +1,8 @@
 package me.mrletsplay.videobase.webinterface.element;
 
+import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.videobase.library.VideoCollection;
+import me.mrletsplay.videobase.webinterface.internal.CollectionThumbnailDocument;
 import me.mrletsplay.videobase.webinterface.page.VideoCollectionPage;
 import me.mrletsplay.webinterfaceapi.page.action.RedirectAction;
 import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
@@ -18,7 +20,7 @@ public class VideoCollectionElement extends Group {
 		addLayoutOptions(DefaultLayoutOption.NO_PADDING);
 
 		addElement(Image.builder()
-			.src("https://testimages.org/img/testimages_screenshot.jpg")
+			.src(CollectionThumbnailDocument.URL + "?collection=" + HttpUtils.urlEncode(collection.getID()))
 			.create());
 
 		addElement(Text.builder()
@@ -27,7 +29,7 @@ public class VideoCollectionElement extends Group {
 
 		addElement(Button.builder()
 			.text("View")
-			.onClick(RedirectAction.to(ActionValue.string(VideoCollectionPage.URL).plus(ActionValue.string("?id=")).plus(ActionValue.string(collection.getID()).urlEncoded())))
+			.onClick(RedirectAction.to(ActionValue.string(VideoCollectionPage.URL + "?id=").plus(ActionValue.string(collection.getID()).urlEncoded())))
 			.create());
 	}
 

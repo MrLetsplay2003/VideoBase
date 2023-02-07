@@ -30,7 +30,8 @@ public class Cache<T> {
 	}
 
 	public synchronized T get(String id) {
-		return entries.get(id).element;
+		CacheEntry e = entries.get(id);
+		return e == null ? null : e.element;
 	}
 
 	public synchronized void purge() {
