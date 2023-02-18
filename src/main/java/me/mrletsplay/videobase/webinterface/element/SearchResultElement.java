@@ -1,6 +1,9 @@
 package me.mrletsplay.videobase.webinterface.element;
 
 import me.mrletsplay.videobase.provider.SearchResult;
+import me.mrletsplay.videobase.webinterface.page.VideoCollectionInfoPage;
+import me.mrletsplay.webinterfaceapi.page.action.RedirectAction;
+import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.Button;
 import me.mrletsplay.webinterfaceapi.page.element.Group;
 import me.mrletsplay.webinterfaceapi.page.element.Image;
@@ -24,7 +27,10 @@ public class SearchResultElement extends Group {
 
 		addElement(Button.builder()
 			.text("View")
-//			.onClick(RedirectAction.to(ActionValue.string(VideoCollectionPage.URL).plus(ActionValue.string("?id=")).plus(ActionValue.string(result.getCollectionID()).urlEncoded())))
+			.onClick(RedirectAction.to(ActionValue.string(VideoCollectionInfoPage.URL + "?provider=")
+				.plus(ActionValue.string(result.getProvider().getID()).urlEncoded())
+				.plus(ActionValue.string("&id="))
+				.plus(ActionValue.string(result.getCollectionID()).urlEncoded())))
 			.create());
 	}
 

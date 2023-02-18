@@ -72,6 +72,18 @@ public class TaskQueue {
 		return true;
 	}
 
+	public List<Task> getTasks() {
+		synchronized (lock) {
+			return new ArrayList<>(this.tasks);
+		}
+	}
+
+	public List<Task> getFinishedTasks() {
+		synchronized (lock) {
+			return new ArrayList<>(this.finishedTasks);
+		}
+	}
+
 	// TODO: add getTasks(), ...
 
 }

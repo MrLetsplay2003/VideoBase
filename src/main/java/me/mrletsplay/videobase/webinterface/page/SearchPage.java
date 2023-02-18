@@ -43,7 +43,7 @@ public class SearchPage extends Page {
 				.fullWidth()
 				.placeholder("Query")
 				.initialValue(q)
-				.onChange(in -> RedirectAction.to(ActionValue.string(URL + "?q=").plus(() -> "encodeURI(" + ActionValue.elementValue(in).toJavaScript() +")")))
+				.onChange(in -> RedirectAction.to(ActionValue.string(URL + "?q=").plus(ActionValue.elementValue(in).urlEncoded())))
 				.create());
 
 			if(q == null) {

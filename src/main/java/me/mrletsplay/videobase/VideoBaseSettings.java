@@ -16,6 +16,7 @@ public class VideoBaseSettings implements AutoSettings {
 	// General
 
 	public static final BooleanSetting
-		GENERATE_VIDEO_THUMBNAILS = general.addBoolean("videobase.thumbnails.generate-video", true, "Generate video thumbnails");
+		GENERATE_VIDEO_THUMBNAILS = general.addBoolean("videobase.thumbnails.generate-video", true, "Generate video thumbnails"),
+		PROXY_EXTERNAL_THUMBNAILS = general.addBoolean("videobase.thumbnails.proxy-external", true, "Proxy external thumbnails");
 
 }

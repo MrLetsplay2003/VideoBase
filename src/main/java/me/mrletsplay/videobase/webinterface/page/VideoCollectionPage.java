@@ -20,7 +20,8 @@ public class VideoCollectionPage extends Page {
 	public static final String URL = "/videobase/collection";
 
 	public VideoCollectionPage() {
-		super("Collection", URL, true);
+		super("Collection", URL);
+		setHidden(true);
 
 		PageSection info = new PageSection();
 		info.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);

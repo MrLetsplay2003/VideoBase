@@ -16,7 +16,8 @@ public class WatchPage extends Page {
 	public static final String URL = "/videobase/watch";
 
 	public WatchPage() {
-		super("Watch", URL, true);
+		super("Watch", URL);
+		setHidden(true);
 
 		PageSection s = new PageSection();
 		addSection(s);

@@ -26,12 +26,14 @@ public class ExampleVideoProvider implements VideoProvider {
 			Arrays.asList(
 				new ExampleVideoInfo(INSTANCE, "video-1", "Video One"),
 				new ExampleVideoInfo(INSTANCE, "video-2", "Video Two")
-			)));
+			)
+		));
 		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "two", "Collection Two",
-				Arrays.asList(
-					new ExampleVideoInfo(INSTANCE, "video-3", "Video Three"),
-					new ExampleVideoInfo(INSTANCE, "video-4", "Video Four")
-			)));
+			Arrays.asList(
+				new ExampleVideoInfo(INSTANCE, "video-3", "Video Three"),
+				new ExampleVideoInfo(INSTANCE, "video-4", "Video Four")
+			)
+		));
 	}
 
 	@Override
@@ -74,7 +76,7 @@ public class ExampleVideoProvider implements VideoProvider {
 
 	@Override
 	public VideoSource getVideoSource(String id) {
-		return null;
+		return sourceCache.get(id);
 	}
 
 }

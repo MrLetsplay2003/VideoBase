@@ -11,6 +11,7 @@ public class ExampleVideoCollectionInfo extends VideoCollectionInfo {
 	private static JSONObject createMeta(String name) {
 		JSONObject meta = new JSONObject();
 		meta.put(META_NAME, name);
+		meta.put(META_THUMBNAIL, "https://testimages.org/img/testimages_screenshot.jpg");
 		return meta;
 	}
 

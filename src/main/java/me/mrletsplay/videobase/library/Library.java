@@ -33,7 +33,7 @@ public class Library {
 	}
 
 	private void loadCollection(Path collectionFolder) throws LibraryLoadException {
-		Path indexPath = Path.of(collectionFolder.toString(), "index.json");
+		Path indexPath = collectionFolder.resolve("index.json");
 		if(!Files.exists(indexPath)) return;
 		try {
 			JSONObject index = new JSONObject(Files.readString(indexPath, StandardCharsets.UTF_8));
@@ -53,7 +53,12 @@ public class Library {
 				if(path == null) continue;
 				JSONObject meta = vid.optJSONObject("metadata").orElse(new JSONObject());
 
-				Path videoPath = Path.of(collectionFolder.toString(), path);
+				Path videoPath = collectionFolder.resolve(path);
+				if(!Files.exists(videoPath)) {
+					System.out.println("Ignoring non-existing video at " + videoPath);
+					continue;
+				}
+
 				collection.addVideo(new Video(collection, id, videoPath, meta));
 			}
 
