@@ -26,6 +26,10 @@ public abstract class VideoCollectionInfo {
 		this(provider, id, metadata, null);
 	}
 
+	public VideoProvider getProvider() {
+		return provider;
+	}
+
 	public String getID() {
 		return id;
 	}

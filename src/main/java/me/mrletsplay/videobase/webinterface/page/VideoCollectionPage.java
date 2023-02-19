@@ -54,6 +54,10 @@ public class VideoCollectionPage extends Page {
 
 		PageSection videos = new PageSection();
 		videos.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
+		videos.getStyle().setProperty("grid-template-columns", "repeat(auto-fill, minmax(265px, min-content))");
+		videos.getStyle().setProperty("justify-content", "space-between");
+		videos.getMobileStyle().setProperty("grid-template-columns", "1fr");
+		videos.getMobileStyle().setProperty("justify-content", "unset");
 		addSection(videos);
 
 		videos.dynamic(els -> {

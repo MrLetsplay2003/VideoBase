@@ -20,6 +20,10 @@ public abstract class VideoInfo {
 		this.metadata = metadata;
 	}
 
+	public VideoProvider getProvider() {
+		return provider;
+	}
+
 	public String getID() {
 		return id;
 	}

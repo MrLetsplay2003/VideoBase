@@ -63,6 +63,8 @@ public abstract class Task {
 			error(e);
 		}
 
+		runCallbacks();
+
 		synchronized(lock) {
 			runningThread = null;
 			Thread.interrupted(); // Clear interrupted flag
@@ -82,8 +84,6 @@ public abstract class Task {
 		}
 
 		onCancel();
-
-		runCallbacks();
 	}
 
 	public boolean isDone() {
@@ -132,8 +132,6 @@ public abstract class Task {
 		this.exception = exception;
 		this.statusMessage = exception.getMessage();
 		onError();
-
-		runCallbacks();
 	}
 
 	protected abstract void runTask();

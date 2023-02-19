@@ -1,5 +1,6 @@
 package me.mrletsplay.videobase.provider.impl;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +18,7 @@ import me.mrletsplay.videobase.util.Cache;
 
 public class ExampleVideoProvider implements VideoProvider {
 
-	private Cache<VideoSource> sourceCache;
+	private Cache<VideoSource> sourceCache = new Cache<>(1, ChronoUnit.HOURS);
 
 	private static final ExampleVideoProvider INSTANCE = new ExampleVideoProvider();
 	private static final List<VideoCollectionInfo> COLLECTIONS = new ArrayList<>();
@@ -30,8 +31,7 @@ public class ExampleVideoProvider implements VideoProvider {
 		));
 		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "two", "Collection Two",
 			Arrays.asList(
-				new ExampleVideoInfo(INSTANCE, "video-3", "Video Three"),
-				new ExampleVideoInfo(INSTANCE, "video-4", "Video Four")
+				new ExampleVideoInfo(INSTANCE, "video-3", "Video Three")
 			)
 		));
 	}
@@ -65,6 +65,14 @@ public class ExampleVideoProvider implements VideoProvider {
 		return Optional.ofNullable(getCollectionInfo(collectionID))
 			.map(c -> c.loadVideos())
 			.orElse(null);
+	}
+
+	@Override
+	public VideoInfo getVideoInfo(String videoID) {
+		return COLLECTIONS.stream()
+			.flatMap(c -> c.loadVideos().stream())
+			.filter(v -> v.getID().equals(videoID))
+			.findFirst().orElse(null);
 	}
 
 	@Override

@@ -21,7 +21,6 @@ public class VideoCollectionInfoPage extends Page {
 
 	public static final String URL = "/videobase/collectioninfo";
 
-
 	public VideoCollectionInfoPage() {
 		super("Video Collection Info", URL);
 		setHidden(true);
@@ -41,6 +40,7 @@ public class VideoCollectionInfoPage extends Page {
 			if(provider == null) return;
 
 			VideoCollectionInfo info = provider.getCollectionInfo(id);
+			if(info == null) return;
 
 			WebinterfaceContext.getCurrentContext().getDocument().setTitle("Download " + info.getName());
 			els.add(TitleText.builder()

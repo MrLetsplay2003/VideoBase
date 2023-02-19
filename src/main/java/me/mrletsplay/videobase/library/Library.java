@@ -13,6 +13,8 @@ import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.json.JSONParseException;
 import me.mrletsplay.videobase.exception.LibraryLoadException;
+import me.mrletsplay.videobase.exception.LibraryUpdateException;
+import me.mrletsplay.videobase.provider.VideoCollectionInfo;
 
 public class Library {
 
@@ -33,7 +35,7 @@ public class Library {
 	}
 
 	private void loadCollection(Path collectionFolder) throws LibraryLoadException {
-		Path indexPath = collectionFolder.resolve("index.json");
+		Path indexPath = collectionFolder.resolve(VideoCollection.INDEX_FILE_NAME);
 		if(!Files.exists(indexPath)) return;
 		try {
 			JSONObject index = new JSONObject(Files.readString(indexPath, StandardCharsets.UTF_8));
@@ -68,6 +70,29 @@ public class Library {
 		}
 	}
 
+	public VideoCollection createVideoCollection(String collectionID, JSONObject metadata) throws LibraryUpdateException {
+		// TODO: make thread-safe
+		Path collectionFolder = baseFolder.resolve(collectionID); // TODO: check existing folder
+		Path indexPath = collectionFolder.resolve(VideoCollection.INDEX_FILE_NAME);
+		try {
+			Files.createDirectories(collectionFolder);
+			JSONObject index = new JSONObject();
+			index.put("metadata", metadata);
+			index.put("videos", new JSONArray());
+			Files.writeString(indexPath, index.toFancyString(), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			throw new LibraryUpdateException(e);
+		}
+
+		VideoCollection collection = new VideoCollection(collectionID, collectionFolder, metadata);
+		collections.add(collection);
+		return collection;
+	}
+
+	public VideoCollection createVideoCollectionFromInfo(VideoCollectionInfo info) throws LibraryUpdateException {
+		return createVideoCollection(info.getID(), info.getMetadata()); // TODO: download thumbnail, create proper metadata
+	}
+
 	public Path getBaseFolder() {
 		return baseFolder;
 	}
@@ -79,6 +104,13 @@ public class Library {
 	public VideoCollection getCollection(String id) {
 		return collections.stream()
 			.filter(c -> c.getID().equals(id))
+			.findFirst().orElse(null);
+	}
+
+	public VideoCollection getCollectionByRemoteID(String providerID, String collectionID) {
+		return collections.stream()
+			.filter(c -> c.getRemoteProviderID() != null && c.getRemoteProviderID().equals(providerID)
+				&& c.getRemoteID() != null && c.getRemoteID().equals(collectionID))
 			.findFirst().orElse(null);
 	}
 

@@ -12,11 +12,18 @@ import java.util.stream.Collectors;
 
 import me.mrletsplay.videobase.exception.InitializationException;
 import me.mrletsplay.videobase.exception.LibraryLoadException;
+import me.mrletsplay.videobase.exception.LibraryUpdateException;
 import me.mrletsplay.videobase.library.Library;
+import me.mrletsplay.videobase.library.Video;
+import me.mrletsplay.videobase.library.VideoCollection;
 import me.mrletsplay.videobase.provider.SearchResult;
+import me.mrletsplay.videobase.provider.VideoCollectionInfo;
+import me.mrletsplay.videobase.provider.VideoInfo;
 import me.mrletsplay.videobase.provider.VideoProvider;
+import me.mrletsplay.videobase.provider.VideoSource;
 import me.mrletsplay.videobase.provider.impl.ExampleVideoProvider;
 import me.mrletsplay.videobase.proxy.URLProxy;
+import me.mrletsplay.videobase.task.Task;
 import me.mrletsplay.videobase.task.TaskQueue;
 import me.mrletsplay.videobase.util.Cache;
 import me.mrletsplay.videobase.webinterface.handler.VideoBaseHandler;
@@ -130,6 +137,54 @@ public class VideoBase {
 
 	public static Cache<BufferedImage> getThumbnailCache() {
 		return thumbnailCache;
+	}
+
+	public static boolean startDownload(VideoCollectionInfo collectionInfo, VideoInfo videoInfo, VideoSource source) {
+		Path tempFile = getTemporaryFile();
+
+		VideoCollection collection = library.getCollectionByRemoteID(collectionInfo.getProvider().getID(), collectionInfo.getID());
+		if(collection != null) {
+			Video video = collection.getVideos().stream()
+				.filter(v -> v.getRemoteID() != null && v.getRemoteID().equals(videoInfo.getID()))
+				.findFirst().orElse(null);
+			if(video != null) return false;
+		}
+
+		Task downloadTask = source.download(tempFile, proxy);
+		downloadTask.onSuccess(() -> {
+			VideoCollection downloadCollection = collection; // TODO: check if collection was created in the meantime
+			if(downloadCollection == null) {
+				try {
+					downloadCollection = library.createVideoCollectionFromInfo(collectionInfo);
+				} catch (LibraryUpdateException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+
+			Path videoPath = downloadCollection.getPath().resolve(videoInfo.getID() + ".mp4");
+			int i = 0;
+			while(Files.exists(videoPath)) videoPath = downloadCollection.getPath().resolve(videoInfo.getID() + "_" + i + ".mp4");
+			try {
+				Files.move(tempFile, videoPath);
+				downloadCollection.addNewVideoFromInfo(videoInfo, videoPath);
+			} catch (IOException | LibraryUpdateException e) {
+				e.printStackTrace();
+			}
+		});
+
+		downloadTask.onError(() -> {
+			downloadTask.getException().printStackTrace();
+			System.out.println("oof");
+			try {
+				Files.deleteIfExists(tempFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+
+		taskQueue.addTask(downloadTask);
+		return true;
 	}
 
 	public static void main(String[] args) throws LibraryLoadException {

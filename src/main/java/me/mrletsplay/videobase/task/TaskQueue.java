@@ -12,11 +12,13 @@ public class TaskQueue {
 
 	private ExecutorService executor;
 	private List<Task> tasks;
+	private List<Task> runningTasks;
 	private List<Task> finishedTasks;
 
 	public TaskQueue(int threads) {
 		this.executor = Executors.newFixedThreadPool(threads);
 		this.tasks = new ArrayList<>();
+		this.runningTasks = new ArrayList<>();
 		this.finishedTasks = new ArrayList<>();
 		for(int i = 0; i < threads; i++) {
 			executor.submit(() -> {
@@ -60,13 +62,14 @@ public class TaskQueue {
 		Task t;
 		synchronized (lock) {
 			if(tasks.isEmpty()) return false;
-			t = tasks.get(0);
+			t = tasks.remove(0);
+			runningTasks.add(t);
 		}
 
-		 if(t.getState() != TaskState.CANCELLED) t.run();
+		if(t.getState() != TaskState.CANCELLED) t.run();
 
 		synchronized (lock) {
-			tasks.remove(t);
+			runningTasks.remove(t);
 			finishedTasks.add(t);
 		}
 		return true;
@@ -75,6 +78,12 @@ public class TaskQueue {
 	public List<Task> getTasks() {
 		synchronized (lock) {
 			return new ArrayList<>(this.tasks);
+		}
+	}
+
+	public List<Task> getRunningTasks() {
+		synchronized (lock) {
+			return new ArrayList<>(this.runningTasks);
 		}
 	}
 

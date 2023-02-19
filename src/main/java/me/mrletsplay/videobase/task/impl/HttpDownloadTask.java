@@ -21,6 +21,9 @@ public class HttpDownloadTask extends Task {
 
 	public HttpDownloadTask(String name, String url, Path toPath, URLProxy proxy) {
 		super(UUID.randomUUID().toString(), name);
+		this.url = url;
+		this.toPath = toPath;
+		this.proxy = proxy;
 	}
 
 	@Override

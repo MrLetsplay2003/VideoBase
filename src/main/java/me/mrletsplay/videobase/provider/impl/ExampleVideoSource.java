@@ -23,7 +23,7 @@ public class ExampleVideoSource implements VideoSource {
 
 	@Override
 	public Task download(Path toPath, URLProxy proxy) {
-		return new HttpDownloadTask("Download Goblin", "https://cringe-studios.com/dev/videobase/GOBLIN.mp4", toPath, proxy);
+		return new HttpDownloadTask("Download Goblin", "https://cringe-studios.com/dev/videobase/lqGOBLIN.mp4", toPath, proxy);
 	}
 
 }

@@ -8,12 +8,16 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import me.mrletsplay.mrcore.json.JSONObject;
+import me.mrletsplay.videobase.VideoBase;
+import me.mrletsplay.videobase.provider.VideoInfo;
+import me.mrletsplay.videobase.provider.VideoProvider;
 
 public class Video {
 
 	public static final String
 		META_NAME = "name",
-		META_THUMBNAIL = "thumbnail";
+		META_THUMBNAIL = "thumbnail",
+		META_REMOTE_ID = "remote.id";
 
 	private VideoCollection collection;
 	private String id;
@@ -51,6 +55,10 @@ public class Video {
 		return metadata.optString(META_THUMBNAIL).orElse(null);
 	}
 
+	public String getRemoteID() {
+		return metadata.optString(META_REMOTE_ID).orElse(null);
+	}
+
 	public BufferedImage getThumbnailImage() {
 		// TODO: generate thumbnail from collection thumbnail if available
 
@@ -64,6 +72,18 @@ public class Video {
 		}catch(IOException e) {
 			return null;
 		}
+	}
+
+	public VideoInfo retrieveInfo() {
+		if(getRemoteID() == null) return null;
+
+		String providerID = collection.getRemoteProviderID();
+		if(providerID == null) return null;
+
+		VideoProvider provider = VideoBase.getProvider(providerID);
+		if(provider == null) return null;
+
+		return provider.getVideoInfo(getRemoteID());
 	}
 
 	@Override
