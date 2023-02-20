@@ -11,13 +11,13 @@ public class TaskQueue {
 	private Object lock = new Object();
 
 	private ExecutorService executor;
-	private List<Task> tasks;
+	private List<Task> queuedTasks;
 	private List<Task> runningTasks;
 	private List<Task> finishedTasks;
 
 	public TaskQueue(int threads) {
 		this.executor = Executors.newFixedThreadPool(threads);
-		this.tasks = new ArrayList<>();
+		this.queuedTasks = new ArrayList<>();
 		this.runningTasks = new ArrayList<>();
 		this.finishedTasks = new ArrayList<>();
 		for(int i = 0; i < threads; i++) {
@@ -37,7 +37,7 @@ public class TaskQueue {
 
 	public void addTask(Task task) {
 		synchronized (lock) {
-			tasks.add(task);
+			queuedTasks.add(task);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class TaskQueue {
 		executor.shutdown();
 		if(cancelRunningTasks) {
 			synchronized (lock) {
-				tasks.stream()
+				queuedTasks.stream()
 					.filter(t -> t.getState() == TaskState.RUNNING)
 					.forEach(t -> t.cancel());
 			}
@@ -61,8 +61,8 @@ public class TaskQueue {
 	private boolean runNextTask() {
 		Task t;
 		synchronized (lock) {
-			if(tasks.isEmpty()) return false;
-			t = tasks.remove(0);
+			if(queuedTasks.isEmpty()) return false;
+			t = queuedTasks.remove(0);
 			runningTasks.add(t);
 		}
 
@@ -75,9 +75,9 @@ public class TaskQueue {
 		return true;
 	}
 
-	public List<Task> getTasks() {
+	public List<Task> getQueuedTasks() {
 		synchronized (lock) {
-			return new ArrayList<>(this.tasks);
+			return new ArrayList<>(this.queuedTasks);
 		}
 	}
 
@@ -93,6 +93,14 @@ public class TaskQueue {
 		}
 	}
 
-	// TODO: add getTasks(), ...
+	public List<Task> getAllTasks() {
+		synchronized (lock) {
+			List<Task> allTasks = new ArrayList<>();
+			allTasks.addAll(queuedTasks);
+			allTasks.addAll(runningTasks);
+			allTasks.addAll(finishedTasks);
+			return allTasks;
+		}
+	}
 
 }

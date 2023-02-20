@@ -2,11 +2,14 @@ package me.mrletsplay.videobase.webinterface.handler;
 
 import java.util.List;
 
+import me.mrletsplay.mrcore.json.JSONArray;
+import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.videobase.VideoBase;
 import me.mrletsplay.videobase.provider.VideoCollectionInfo;
 import me.mrletsplay.videobase.provider.VideoInfo;
 import me.mrletsplay.videobase.provider.VideoProvider;
 import me.mrletsplay.videobase.provider.VideoSource;
+import me.mrletsplay.videobase.task.Task;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionHandler;
@@ -40,6 +43,22 @@ public class VideoBaseHandler implements ActionHandler {
 		}
 
 		return ActionResponse.success();
+	}
+
+	@WebinterfaceHandler(requestTarget = "videobase", requestTypes = "getTasks")
+	public ActionResponse getTasks(ActionEvent event) {
+		JSONArray tasks = new JSONArray();
+		for(Task t : VideoBase.getTaskQueue().getAllTasks()) {
+			JSONObject task = new JSONObject();
+			task.set("name", t.getName());
+			task.set("progress", (int) (t.getProgress() * 100));
+			task.set("status", t.getStatusMessage());
+			tasks.add(task);
+		}
+
+		JSONObject res = new JSONObject();
+		res.put("tasks", tasks);
+		return ActionResponse.success(res);
 	}
 
 }

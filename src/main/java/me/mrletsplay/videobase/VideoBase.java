@@ -25,6 +25,7 @@ import me.mrletsplay.videobase.provider.impl.ExampleVideoProvider;
 import me.mrletsplay.videobase.proxy.URLProxy;
 import me.mrletsplay.videobase.task.Task;
 import me.mrletsplay.videobase.task.TaskQueue;
+import me.mrletsplay.videobase.task.impl.DummyTask;
 import me.mrletsplay.videobase.util.Cache;
 import me.mrletsplay.videobase.webinterface.handler.VideoBaseHandler;
 import me.mrletsplay.videobase.webinterface.internal.CollectionThumbnailDocument;
@@ -72,7 +73,7 @@ public class VideoBase {
 		providers = new ArrayList<>();
 		thumbnailCache = new Cache<>(1, ChronoUnit.HOURS);
 
-		addProvider(new ExampleVideoProvider());
+		addProvider(new ExampleVideoProvider()); // TODO: remove
 
 		DefaultSettings.HOME_PAGE_PATH.defaultValue(HomePage.URL);
 		Webinterface.start();
@@ -140,19 +141,16 @@ public class VideoBase {
 	}
 
 	public static boolean startDownload(VideoCollectionInfo collectionInfo, VideoInfo videoInfo, VideoSource source) {
+		// TODO: check for running download of the video
 		Path tempFile = getTemporaryFile();
 
-		VideoCollection collection = library.getCollectionByRemoteID(collectionInfo.getProvider().getID(), collectionInfo.getID());
-		if(collection != null) {
-			Video video = collection.getVideos().stream()
-				.filter(v -> v.getRemoteID() != null && v.getRemoteID().equals(videoInfo.getID()))
-				.findFirst().orElse(null);
-			if(video != null) return false;
-		}
+		Video video = library.getVideoByRemoteID(collectionInfo.getProvider().getID(), collectionInfo.getID(), videoInfo.getID());
+		if(video != null) return false;
 
 		Task downloadTask = source.download(tempFile, proxy);
 		downloadTask.onSuccess(() -> {
-			VideoCollection downloadCollection = collection; // TODO: check if collection was created in the meantime
+			// TODO: make thread-safe
+			VideoCollection downloadCollection = library.getCollectionByRemoteID(collectionInfo.getProvider().getID(), collectionInfo.getID());
 			if(downloadCollection == null) {
 				try {
 					downloadCollection = library.createVideoCollectionFromInfo(collectionInfo);
@@ -162,13 +160,9 @@ public class VideoBase {
 				}
 			}
 
-			Path videoPath = downloadCollection.getPath().resolve(videoInfo.getID() + ".mp4");
-			int i = 0;
-			while(Files.exists(videoPath)) videoPath = downloadCollection.getPath().resolve(videoInfo.getID() + "_" + i + ".mp4");
 			try {
-				Files.move(tempFile, videoPath);
-				downloadCollection.addNewVideoFromInfo(videoInfo, videoPath);
-			} catch (IOException | LibraryUpdateException e) {
+				library.addNewVideoFromInfo(collectionInfo, videoInfo, tempFile);
+			} catch (LibraryUpdateException e) {
 				e.printStackTrace();
 			}
 		});
@@ -189,6 +183,7 @@ public class VideoBase {
 
 	public static void main(String[] args) throws LibraryLoadException {
 		init(Path.of("vids"));
+		taskQueue.addTask(new DummyTask("Dummy task")); // TODO: remove
 	}
 
 }

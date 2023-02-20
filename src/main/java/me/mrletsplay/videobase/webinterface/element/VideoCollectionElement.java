@@ -17,6 +17,7 @@ public class VideoCollectionElement extends Group {
 
 	public VideoCollectionElement(VideoCollection collection) {
 		setGrid(new Grid().setColumns("1fr").setRows("auto min-content min-content"));
+		getStyle().setProperty("height", "100%");
 		addLayoutOptions(DefaultLayoutOption.NO_PADDING);
 
 		addElement(Image.builder()

@@ -50,4 +50,9 @@ public class DefaultURLProxy extends AbstractURLProxy {
 		}
 	}
 
+	@Override
+	public HttpClient client() {
+		return client;
+	}
+
 }

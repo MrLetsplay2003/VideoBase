@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -30,15 +35,35 @@ public class HttpDownloadTask extends Task {
 	protected void runTask() {
 		InputStream in;
 		try {
+			URI uri = URI.create(url);
+			HttpClient client = proxy == null ? HttpClient.newHttpClient() : proxy.client();
+			HttpResponse<Void> head = client.send(HttpRequest.newBuilder(uri)
+				.method("HEAD", BodyPublishers.noBody())
+				.build(), BodyHandlers.discarding());
+
+			long length = head.headers().firstValue("Content-Length")
+				.map(Long::parseLong)
+				.orElse(-1L);
+
 			if(proxy != null) {
-					in = proxy.openStream(url.toString());
+				in = proxy.openStream(url.toString());
 			}else {
 				in = URI.create(url).toURL().openStream();
 			}
 
-			OutputStream out = Files.newOutputStream(toPath);
-			in.transferTo(out);
-		} catch (URLProxyException | IOException e) {
+			try(OutputStream out = Files.newOutputStream(toPath)) {
+				byte[] buf = new byte[4096];
+				int len = 0;
+				long totalLen = 0;
+				while((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+					totalLen += len;
+					if(length > 0) {
+						progress((double) totalLen / length);
+					}
+				}
+			}
+		} catch (InterruptedException | URLProxyException | IOException e) {
 			throw new TaskException(e);
 		}
 	}
