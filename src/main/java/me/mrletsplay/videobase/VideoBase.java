@@ -15,7 +15,6 @@ import me.mrletsplay.videobase.exception.LibraryLoadException;
 import me.mrletsplay.videobase.exception.LibraryUpdateException;
 import me.mrletsplay.videobase.library.Library;
 import me.mrletsplay.videobase.library.Video;
-import me.mrletsplay.videobase.library.VideoCollection;
 import me.mrletsplay.videobase.provider.SearchResult;
 import me.mrletsplay.videobase.provider.VideoCollectionInfo;
 import me.mrletsplay.videobase.provider.VideoInfo;
@@ -149,17 +148,6 @@ public class VideoBase {
 
 		Task downloadTask = source.download(tempFile, proxy);
 		downloadTask.onSuccess(() -> {
-			// TODO: make thread-safe
-			VideoCollection downloadCollection = library.getCollectionByRemoteID(collectionInfo.getProvider().getID(), collectionInfo.getID());
-			if(downloadCollection == null) {
-				try {
-					downloadCollection = library.createVideoCollectionFromInfo(collectionInfo);
-				} catch (LibraryUpdateException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-
 			try {
 				library.addNewVideoFromInfo(collectionInfo, videoInfo, tempFile);
 			} catch (LibraryUpdateException e) {
