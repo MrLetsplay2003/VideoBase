@@ -74,7 +74,7 @@ public class VideoCollection {
 	public BufferedImage getThumbnailImage() {
 		if(getThumbnail() == null) return null;
 
-		Path thumbnailPath = Path.of(path.toString(), getThumbnail());
+		Path thumbnailPath = path.resolve(getThumbnail());
 		if(!Files.exists(thumbnailPath)) return null;
 
 		try {

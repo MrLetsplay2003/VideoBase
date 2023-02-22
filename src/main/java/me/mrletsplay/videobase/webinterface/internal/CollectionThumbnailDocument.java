@@ -16,6 +16,7 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
 import me.mrletsplay.videobase.VideoBase;
 import me.mrletsplay.videobase.library.VideoCollection;
+import me.mrletsplay.videobase.util.ThumbnailUtil;
 import me.mrletsplay.webinterfaceapi.session.Session;
 
 public class CollectionThumbnailDocument implements HttpDocument {
@@ -41,6 +42,7 @@ public class CollectionThumbnailDocument implements HttpDocument {
 
 			image = collection.getThumbnailImage();
 			if(image == null) image = FALLBACK_THUMBNAIL;
+			image = ThumbnailUtil.rescaleCollectionThumbnail(image); // TODO: save rescaled thumbnail?
 
 			VideoBase.getThumbnailCache().add(collectionID, image);
 		}

@@ -64,7 +64,7 @@ public class Video {
 
 		if(getThumbnail() == null) return null;
 
-		Path thumbnailPath = Path.of(getThumbnail());
+		Path thumbnailPath = collection.getPath().resolve(getThumbnail());
 		if(!Files.exists(thumbnailPath)) return null;
 
 		try {

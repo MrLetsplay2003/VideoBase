@@ -12,9 +12,15 @@ import me.mrletsplay.mrcore.misc.StringUtils;
 
 public class ThumbnailUtil {
 
-	private static final int
+	public static final int
 		THUMBNAIL_WIDTH = 720,
-		THUMBNAIL_HEIGHT = 480;
+		THUMBNAIL_HEIGHT = 480,
+		COLLECTION_THUMBNAIL_WIDTH = 480,
+		COLLECTION_THUMBNAIL_HEIGHT = 720;
+
+	public static final double
+		THUMBNAIL_RATIO = (double) THUMBNAIL_WIDTH / THUMBNAIL_HEIGHT,
+		COLLECTION_THUMBNAIL_RATIO = (double) COLLECTION_THUMBNAIL_WIDTH / COLLECTION_THUMBNAIL_HEIGHT;
 
 	public static BufferedImage generateThumbnail(String episode, String text, BufferedImage background) {
 		BufferedImage thumb = new BufferedImage(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
@@ -54,6 +60,36 @@ public class ThumbnailUtil {
 		}
 
 		return thumb;
+	}
+
+	private static BufferedImage rescaleThumbnail(BufferedImage thumbnail, int targetWidth, int targetHeight) {
+		double ratio = (double) thumbnail.getWidth() / thumbnail.getHeight();
+
+		int width, height, edgeX, edgeY;
+		if(ratio > COLLECTION_THUMBNAIL_RATIO) {
+			width = targetWidth;
+			height = (int) (1 / ratio * width);
+			edgeY = targetHeight - height;
+			edgeX = 0;
+		}else {
+			height = targetHeight;
+			width = (int) (ratio * height);
+			edgeX = targetWidth - width;
+			edgeY = 0;
+		}
+
+		BufferedImage image = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_3BYTE_BGR);
+		Graphics2D g2d = image.createGraphics();
+		g2d.drawImage(thumbnail, edgeX / 2, edgeY / 2, width, height, null);
+		return image;
+	}
+
+	public static BufferedImage rescaleVideoThumbnail(BufferedImage thumbnail) {
+		return rescaleThumbnail(thumbnail, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
+	}
+
+	public static BufferedImage rescaleCollectionThumbnail(BufferedImage thumbnail) {
+		return rescaleThumbnail(thumbnail, COLLECTION_THUMBNAIL_WIDTH, COLLECTION_THUMBNAIL_HEIGHT);
 	}
 
 }
