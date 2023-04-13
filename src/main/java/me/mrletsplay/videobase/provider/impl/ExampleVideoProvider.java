@@ -23,15 +23,15 @@ public class ExampleVideoProvider implements VideoProvider {
 	private static final ExampleVideoProvider INSTANCE = new ExampleVideoProvider();
 	private static final List<VideoCollectionInfo> COLLECTIONS = new ArrayList<>();
 	static {
-		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "one", "Collection One",
+		COLLECTIONS.add(new VideoCollectionInfo(INSTANCE, "one", new JSONObject("{\"name\":\"Collection One\"}"),
 			Arrays.asList(
-				new ExampleVideoInfo(INSTANCE, "video-1", "Video One"),
-				new ExampleVideoInfo(INSTANCE, "video-2", "Video Two")
+				new VideoInfo(INSTANCE, "video-1", new JSONObject("{\"name\":\"Video One\"}")),
+				new VideoInfo(INSTANCE, "video-2", new JSONObject("{\"name\":\"Video Two\"}"))
 			)
 		));
-		COLLECTIONS.add(new ExampleVideoCollectionInfo(INSTANCE, "two", "Collection Two",
+		COLLECTIONS.add(new VideoCollectionInfo(INSTANCE, "two", new JSONObject("{\"name\":\"Collection Two\"}"),
 			Arrays.asList(
-				new ExampleVideoInfo(INSTANCE, "video-3", "Video Three")
+				new VideoInfo(INSTANCE, "video-3", new JSONObject("{\"name\":\"Video Three\"}"))
 			)
 		));
 	}
@@ -61,7 +61,7 @@ public class ExampleVideoProvider implements VideoProvider {
 	}
 
 	@Override
-	public List<? extends VideoInfo> getCollectionVideos(String collectionID) {
+	public List<VideoInfo> getCollectionVideos(String collectionID) {
 		return Optional.ofNullable(getCollectionInfo(collectionID))
 			.map(c -> c.loadVideos())
 			.orElse(null);

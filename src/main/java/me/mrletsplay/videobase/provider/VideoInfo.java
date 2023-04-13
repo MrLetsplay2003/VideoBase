@@ -4,7 +4,7 @@ import java.util.List;
 
 import me.mrletsplay.mrcore.json.JSONObject;
 
-public abstract class VideoInfo {
+public class VideoInfo {
 
 	public static final String
 		META_NAME = "name",

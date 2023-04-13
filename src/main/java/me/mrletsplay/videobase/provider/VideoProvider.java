@@ -28,7 +28,7 @@ public interface VideoProvider {
 	 * @param collectionID The id of the collection
 	 * @return The video collection's videos
 	 */
-	public List<? extends VideoInfo> getCollectionVideos(String collectionID);
+	public List<VideoInfo> getCollectionVideos(String collectionID);
 
 	/**
 	 * Retrieves a video's info by its id

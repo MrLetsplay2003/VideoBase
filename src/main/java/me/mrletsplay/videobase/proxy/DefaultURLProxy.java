@@ -39,9 +39,6 @@ public class DefaultURLProxy extends AbstractURLProxy {
 	}
 
 	@Override
-	public void close() throws IOException {}
-
-	@Override
 	protected InputStream openRegularURL(String url) throws URLProxyException {
 		try {
 			return client.send(HttpRequest.newBuilder(URI.create(url)).build(), BodyHandlers.ofInputStream()).body();

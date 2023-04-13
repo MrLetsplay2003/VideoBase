@@ -4,7 +4,7 @@ import java.util.List;
 
 import me.mrletsplay.mrcore.json.JSONObject;
 
-public abstract class VideoCollectionInfo {
+public class VideoCollectionInfo {
 
 	public static final String
 		META_NAME = "name",
@@ -13,9 +13,9 @@ public abstract class VideoCollectionInfo {
 	private VideoProvider provider;
 	private String id;
 	private JSONObject metadata;
-	private List<? extends VideoInfo> cachedVideos;
+	private List<VideoInfo> cachedVideos;
 
-	public VideoCollectionInfo(VideoProvider provider, String id, JSONObject metadata, List<? extends VideoInfo> videos) {
+	public VideoCollectionInfo(VideoProvider provider, String id, JSONObject metadata, List<VideoInfo> videos) {
 		this.provider = provider;
 		this.id = id;
 		this.metadata = metadata;
@@ -34,7 +34,7 @@ public abstract class VideoCollectionInfo {
 		return id;
 	}
 
-	public List<? extends VideoInfo> loadVideos() {
+	public List<VideoInfo> loadVideos() {
 		if(cachedVideos != null) return cachedVideos;
 		return cachedVideos = provider.getCollectionVideos(id);
 	}

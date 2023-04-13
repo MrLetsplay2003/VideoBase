@@ -45,7 +45,7 @@ public class TaskQueue {
 		executor.shutdown();
 		if(cancelRunningTasks) {
 			synchronized (lock) {
-				queuedTasks.stream()
+				runningTasks.stream()
 					.filter(t -> t.getState() == TaskState.RUNNING)
 					.forEach(t -> t.cancel());
 			}
